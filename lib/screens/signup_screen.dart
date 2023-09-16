@@ -1,9 +1,6 @@
-// ignore_for_file: sort_child_properties_last, unused_local_variable
+// ignore_for_file: sort_child_properties_last, unused_local_variable, non_constant_identifier_names, use_build_context_synchronously, prefer_final_fields
 
-// import 'dart:math';
-
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
+  bool _isLoading = false;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -37,9 +35,34 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void selectImage() async {
     Uint8List im = await pickImage(ImageSource.gallery);
+      print("Selected image: $im");
+
     setState(() {
       _image = im;
     });
+  }
+
+  void SignUpUser()async {
+     {
+      setState(() {
+        _isLoading = true;
+      });
+      String res = await AuthMethods().signUpUser(
+        email: _emailController.text,
+        password: _passwordController.text,
+        username: _usernameController.text,
+        bio: _bioController.text,
+        file: _image!,
+      );
+      if (res != 'success') {
+        ShowSnackBar(res, context);
+      }else{
+              ShowSnackBar(res, context);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -72,7 +95,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           radius: 64,
                           backgroundImage: MemoryImage(_image!),
                         )
-                      : const CircleAvatar(
+                      :
+                      const CircleAvatar(
                           radius: 64,
                           backgroundImage: NetworkImage(
                               'https://images.unsplash.com/photo-1687360440886-f220f137a16c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'),
@@ -81,7 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       bottom: -10,
                       left: 80,
                       child: IconButton(
-                          onPressed: selectImage,
+                          onPressed:selectImage,
                           icon: const Icon(
                             Icons.add_a_photo,
                           )))
@@ -128,19 +152,17 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(
                 height: 24,
               ),
-              // login button
+              // signup button
               InkWell(
-                onTap: () async {
-                  String res = await AuthMethods().signUpUser(
-                      email: _emailController.text,
-                      password: _passwordController.text,
-                      username: _usernameController.text,
-                      bio: _bioController.text,
-                      file: _image!,);
-                  // print(res);
-                },
+                onTap: SignUpUser,
                 child: Container(
-                  child: const Text('Sign up'),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : const Text('Sign up'),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
