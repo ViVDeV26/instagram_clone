@@ -9,7 +9,14 @@ import 'package:instagram_clone/models/users.dart' as model;
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // signup user
+  Future<model.User> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    return model.User.fromSnap(snap);
+  }
+
+  // signup use
   Future<String> signUpUser(
       {required String email,
       required String password,
@@ -35,7 +42,9 @@ class AuthMethods {
             bio: bio,
             followers: [],
             following: []);
-        await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson(),);
+        await _firestore.collection('users').doc(cred.user!.uid).set(
+              user.toJson(),
+            );
         res = "success";
       }
       // } on FirebaseAuthException catch (err) {
@@ -64,7 +73,7 @@ class AuthMethods {
         res = "success";
       } else {
         res = 'Please enter all the fields';
-        }
+      }
     } catch (err) {
       res = err.toString();
     }
