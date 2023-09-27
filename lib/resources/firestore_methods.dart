@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, unused_field, empty_catches
+// ignore_for_file: unused_local_variable, unused_field, empty_catches, avoid_print
 
 import 'dart:typed_data';
 
