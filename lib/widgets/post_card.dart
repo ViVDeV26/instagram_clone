@@ -136,7 +136,8 @@ class _PostCardState extends State<PostCard> {
                       : const Icon(Icons.favorite_border)),
             ),
             IconButton(
-                onPressed: () =>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CommentsScreen())),
+                onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CommentsScreen())),
                 icon: const Icon(
                   Icons.comment_outlined,
                 )),
