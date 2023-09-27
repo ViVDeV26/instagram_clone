@@ -1,6 +1,5 @@
 // ignore_for_file: unused_local_variable, unused_field, empty_catches
 
-
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,5 +37,22 @@ class FireStoreMethods {
       res = err.toString();
     }
     return res;
+  }
+
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
+       await _firestore.collection('posts').doc(postId).update({'likes':FieldValue.arrayRemove([uid]),
+        });
+      }
+      else{
+        {
+       await _firestore.collection('posts').doc(postId).update({'likes':FieldValue.arrayUnion([uid]),
+        });
+      }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
